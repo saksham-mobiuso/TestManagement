@@ -2,6 +2,8 @@ package com.mobi.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mobi.models.Questions;
@@ -48,20 +50,43 @@ public class TestService {
 	}
 
 	public ArrayList<Questions> findTestByTestId(Integer testId) {
-		testRepository.findByTestId(testId).stream().forEach(t -> System.out.println(t.getTestQuestionId()));
 
 		ArrayList<Questions> generatedTest = new ArrayList<>();
-		List<Tests> tempList = testRepository.findByTestId(testId);
+
 		Questions questions = null;
 
-		for (Tests t : tempList) {
+		for (Integer t : randomSetGenerator(testId)) {
 			questions = new Questions();
-			questions.setQuestionId(t.getTestQuestionId());
-			questions.setQuestion(questionsService.getQuestionById(t.getTestQuestionId()).getQuestion());
-			questions.setOptionss(questionsService.getQuestionById(t.getTestQuestionId()).getOptionss());
+			questions.setQuestionId(t);
+			questions.setQuestion(questionsService.getQuestionById(t).getQuestion());
+			questions.setQuestionType((questionsService.getQuestionById(t).getQuestionType()));
+			questions.setOptionss(questionsService.getQuestionById(t).getOptionss());
 			generatedTest.add(questions);
 		}
 		return generatedTest;
+	}
+
+	public List<Integer> randomSetGenerator(Integer testId) {
+
+		Random rand = new Random();
+		List<Integer> testQuestionList = new ArrayList<>();
+		testRepository.findByTestId(testId).stream().forEach(t -> testQuestionList.add(t.getTestQuestionId()));
+
+		{
+			List<Integer> newList = new ArrayList<>();
+			for (int i = 0; i <= testQuestionList.size(); i++) {
+
+				int randomIndex = rand.nextInt(testQuestionList.size());
+
+				newList.add(testQuestionList.get(randomIndex));
+
+				testQuestionList.remove(randomIndex);
+			}
+			newList.add(testQuestionList.get(0));
+			System.out.println(newList);
+			return newList;
+		}
+
 	}
 
 }

@@ -24,6 +24,7 @@ public class Questions {
 	@OneToMany(mappedBy = "questionId",cascade = CascadeType.ALL)
 	private List<Optionss> Optionss;
 	
+	private String questionType;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn
@@ -34,12 +35,22 @@ public class Questions {
 
 	}
 	
-	public Questions(Integer questionId, String question, List<com.mobi.models.Optionss> optionss, Answers answers) {
+	public Questions(Integer questionId, String question, List<com.mobi.models.Optionss> optionss, String questionType,
+			Answers answers) {
 		super();
 		this.questionId = questionId;
 		this.question = question;
 		Optionss = optionss;
+		this.questionType = questionType;
 		this.answers = answers;
+	}
+
+	public String getQuestionType() {
+		return questionType;
+	}
+
+	public void setQuestionType(String questionType) {
+		this.questionType = questionType;
 	}
 
 	public Integer getQuestionId() {

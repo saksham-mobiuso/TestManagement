@@ -2,11 +2,13 @@ package com.mobi.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import com.mobi.models.Questions;
+import com.mobi.repository.AnswerRepository;
 import com.mobi.repository.QuestionsRepository;
 
 @Service
@@ -14,6 +16,9 @@ public class QuestionsService {
 	
 	@Autowired
 	private QuestionsRepository questionsRepository;
+	
+	@Autowired
+	private AnswerRepository answerRepository;
 
 	public List<Questions> getAllQuestions() {
 		List<Questions> questions = new ArrayList<>();
@@ -31,5 +36,23 @@ public class QuestionsService {
 
 	public void deleteQuestion(Integer id) {
 		questionsRepository.deleteById(id);
+	}
+
+	public ResponseEntity<Questions> updateQuestion(Questions questions, Integer id) {
+		Optional<Questions> questionData = questionsRepository.findById(id);
+		if(questionData.isPresent()) {
+			Questions tempQuestion = questionData.get();
+			tempQuestion.setQuestion(questions.getQuestion());
+			tempQuestion.setOptionss(questions.getOptionss());
+			tempQuestion.getAnswers().setQuestionId(id);
+			tempQuestion.getAnswers().setCorrectAnswer(answerRepository.findByQuestionId(id).get(0).getCorrectAnswer());
+			tempQuestion.setQuestionType(questions.getQuestionType());
+			return new ResponseEntity<>(questionsRepository.save(tempQuestion),HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+
+	public List<Questions> fingByType(String type) {
+		return questionsRepository.findByQuestionType(type);
 	}
 }

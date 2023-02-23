@@ -8,4 +8,5 @@ import com.mobi.models.Optionss;
 @Service
 public interface OptionssRepository extends CrudRepository<Optionss, String>{
 	
+	
 }
