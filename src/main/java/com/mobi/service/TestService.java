@@ -66,7 +66,7 @@ public class TestService {
 		return generatedTest;
 	}
 
-	public List<Integer> randomSetGenerator(Integer testId) {
+	private List<Integer> randomSetGenerator(Integer testId) {
 
 		Random rand = new Random();
 		List<Integer> testQuestionList = new ArrayList<>();
@@ -87,6 +87,12 @@ public class TestService {
 			return newList;
 		}
 
+	}
+
+	public List<Tests> findallTests() {
+		List<Tests> tests=new ArrayList<>();
+		testRepository.findAll().forEach(tests::add);
+		return tests;
 	}
 
 }

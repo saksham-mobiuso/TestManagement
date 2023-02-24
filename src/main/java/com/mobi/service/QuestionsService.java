@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.mobi.models.Questions;
-import com.mobi.repository.AnswerRepository;
 import com.mobi.repository.QuestionsRepository;
 
 @Service
@@ -16,9 +15,6 @@ public class QuestionsService {
 	
 	@Autowired
 	private QuestionsRepository questionsRepository;
-	
-	@Autowired
-	private AnswerRepository answerRepository;
 
 	public List<Questions> getAllQuestions() {
 		List<Questions> questions = new ArrayList<>();
@@ -44,8 +40,6 @@ public class QuestionsService {
 			Questions tempQuestion = questionData.get();
 			tempQuestion.setQuestion(questions.getQuestion());
 			tempQuestion.setOptionss(questions.getOptionss());
-			tempQuestion.getAnswers().setQuestionId(id);
-			tempQuestion.getAnswers().setCorrectAnswer(answerRepository.findByQuestionId(id).get(0).getCorrectAnswer());
 			tempQuestion.setQuestionType(questions.getQuestionType());
 			return new ResponseEntity<>(questionsRepository.save(tempQuestion),HttpStatus.OK);
 		}

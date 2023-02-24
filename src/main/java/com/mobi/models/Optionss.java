@@ -6,18 +6,21 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties(value = {"correctAnswer"},allowSetters = true)
 public class Optionss {
 	
 
 	@Column(name = "question_id")
-	private Integer questionId;
-	@Id
-	@Column(name = "option_value")
-	private String optionValue;
+	private Integer questionId;                              
+	@Id                                                     //BUG : Can't add duplicate options from POST API														
+	@Column(name = "option_value")							//FIX : Add new field serial number and make it @Id. 
+	private String optionValue;       
+	
+	private boolean correctAnswer;
 	
 	@ManyToOne
 	@JoinColumn(name = "question_id",referencedColumnName = "question_id",insertable = false,updatable = false)
@@ -27,12 +30,23 @@ public class Optionss {
 	public Optionss() {
 		
 	}
-		
-	public Optionss(Integer questionId, String optionValue, Questions questions) {
+	
+	public Optionss(Integer questionId, String optionValue, boolean correctAnswer,
+			Questions questions) {
 		super();
 		this.questionId = questionId;
 		this.optionValue = optionValue;
+		this.correctAnswer = correctAnswer;
 		this.questions = questions;
+	}
+
+
+	public boolean isCorrectAnswer() {
+		return correctAnswer;
+	}
+
+	public void setCorrectAnswer(boolean correctAnswer) {
+		this.correctAnswer = correctAnswer;
 	}
 
 	public Integer getQuestionId() {
@@ -59,5 +73,4 @@ public class Optionss {
 		this.questions = questions;
 	}
 	
-
 }

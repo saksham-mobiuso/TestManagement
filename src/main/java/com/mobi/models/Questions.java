@@ -1,19 +1,14 @@
 package com.mobi.models;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "questions")
-@JsonIgnoreProperties(value = {"answers"},allowSetters= true)
 public class Questions {
 	
 	@Id
@@ -25,24 +20,18 @@ public class Questions {
 	private List<Optionss> Optionss;
 	
 	private String questionType;
-	
-	@OneToOne(cascade = CascadeType.ALL)
-	@PrimaryKeyJoinColumn
-	private Answers answers;
-	
 		
 	public Questions() {
 
 	}
 	
-	public Questions(Integer questionId, String question, List<com.mobi.models.Optionss> optionss, String questionType,
-			Answers answers) {
+	public Questions(Integer questionId, String question, List<com.mobi.models.Optionss> optionss, String questionType) {
 		super();
 		this.questionId = questionId;
 		this.question = question;
 		Optionss = optionss;
 		this.questionType = questionType;
-		this.answers = answers;
+
 	}
 
 	public String getQuestionType() {
@@ -77,12 +66,5 @@ public class Questions {
 		Optionss = optionss;
 	}
 	
-	public Answers getAnswers() {
-		return answers;
-	}
-
-	public void setAnswers(Answers answers) {
-		this.answers = answers;
-	}
 		
 }

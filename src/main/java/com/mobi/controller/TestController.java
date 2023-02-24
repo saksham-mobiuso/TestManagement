@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.mobi.models.Questions;
+import com.mobi.models.Tests;
 import com.mobi.service.TestService;
 
 @RestController
@@ -27,6 +28,11 @@ public class TestController {
 	public List<Questions> findTestByTestId(@PathVariable Integer testId ) {
 		System.out.println("hwlo " + testId);
 		return testService.findTestByTestId(testId);
+	}
+	
+	@GetMapping("/tests")
+	public List<Tests> allTests() {
+		return testService.findallTests();
 	}
 	
 
