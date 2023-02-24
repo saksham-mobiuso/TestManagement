@@ -1,5 +1,6 @@
 package com.mobi.controller;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mobi.exceptions.NoCorrectOptionError;
 import com.mobi.models.Optionss;
 import com.mobi.models.Questions;
 import com.mobi.service.AnswersService;
@@ -40,14 +43,14 @@ public class AdminController {
 	}
 
 	@PostMapping("/question")
-	public ResponseEntity<String> addQuestion(@RequestBody Questions questions) {
+	public ResponseEntity<NoCorrectOptionError> addQuestion(@RequestBody Questions questions) {
 		for (Optionss q : questions.getOptionss()) {
 			if (q.getOptionValue().equals(questions.getAnswers().getCorrectAnswer())) {
 				questionsService.addQuestion(questions);
-				return ResponseEntity.ok().body("Question Added");
+				return ResponseEntity.ok().body(null);
 			}
 		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Correct Option Not Found");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NoCorrectOptionError(new Date(),"No Correct Option Found"));
 	}
 	
 	@PutMapping("/questions/{id}")

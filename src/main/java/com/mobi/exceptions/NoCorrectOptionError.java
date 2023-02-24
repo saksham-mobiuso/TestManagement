@@ -2,7 +2,7 @@ package com.mobi.exceptions;
 
 import java.util.Date;
 
-public class NoCorrectOptionError extends Exception{
+public class NoCorrectOptionError{
 	private Date timeStamp;
 	private String message;
 	
