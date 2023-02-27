@@ -2,16 +2,16 @@ package com.mobi.exceptions;
 
 import java.util.Date;
 
-public class NoCorrectOptionError{
+public class CustomError{
 	private Date timeStamp;
 	private String message;
 	
 	
-	public NoCorrectOptionError() {
+	public CustomError() {
 		super();
 		
 	}
-	public NoCorrectOptionError(Date timeStamp, String message) {
+	public CustomError(Date timeStamp, String message) {
 		super();
 		this.timeStamp = timeStamp;
 		this.message = message;

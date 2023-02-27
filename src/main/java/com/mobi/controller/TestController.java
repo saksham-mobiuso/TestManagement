@@ -1,39 +1,45 @@
 package com.mobi.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mobi.exceptions.CustomError;
 import com.mobi.models.Questions;
-import com.mobi.models.Tests;
+import com.mobi.models.TestInfo;
 import com.mobi.service.TestService;
 
 @RestController
 public class TestController {
-	
+
 	@Autowired
 	TestService testService;
-	
-	@PostMapping("/test")
-	public ArrayList<Questions> createTest(@RequestParam List<Integer> id) {
-		return testService.createTests(id);
+
+	@PostMapping("/tests")
+	public ResponseEntity<CustomError> createTest(@RequestBody TestInfo testInfo) {
+		return testService.createTests(testInfo);		
 	}
-	
+
 	@GetMapping("/tests/{testId}")
-	public List<Questions> findTestByTestId(@PathVariable Integer testId ) {
+	public List<Questions> findTestByTestId(@PathVariable Integer testId) {
 		System.out.println("hwlo " + testId);
 		return testService.findTestByTestId(testId);
 	}
-	
+
 	@GetMapping("/tests")
-	public List<Tests> allTests() {
+	public List<TestInfo> allTests() {
 		return testService.findallTests();
 	}
-	
+
+	@DeleteMapping("/tests/{testId}")
+	public void deleteTest(@PathVariable Integer testId) {
+		testService.deleteTest(testId);
+	}
 
 }

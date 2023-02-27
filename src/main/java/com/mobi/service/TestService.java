@@ -1,14 +1,20 @@
 package com.mobi.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import com.mobi.exceptions.CustomError;
 import com.mobi.models.Questions;
-import com.mobi.models.Tests;
-import com.mobi.repository.TestRepository;
+import com.mobi.models.TestInfo;
+import com.mobi.repository.TestInfoRepository;
+import com.mobi.repository.TestQuestionsRepository;
 
 @Service
 public class TestService {
@@ -17,36 +23,25 @@ public class TestService {
 	QuestionsService questionsService;
 
 	@Autowired
-	TestRepository testRepository;
+	TestInfoRepository testInfoRepository;
 
-	public ArrayList<Questions> createTests(List<Integer> id) {
+	@Autowired
+	TestQuestionsRepository testQuestionsRepository;
 
-		ArrayList<Questions> generatedTest = new ArrayList<>();
-
-		Questions question = null;
-
-		int randomTestId = (int) (Math.random() * 300);
-
-		Tests test = null;
-
-		for (int i : id) {
-
-			question = new Questions();
-			test = new Tests();
-
-			question.setQuestionId(questionsService.getQuestionById(i).getQuestionId());
-			question.setQuestion(questionsService.getQuestionById(i).getQuestion());
-			question.setOptionss(questionsService.getQuestionById(i).getOptionss());
-
-			test.setTestId(randomTestId);
-			test.setTestQuestionId(i);
-
-			testRepository.save(test);
-
-			generatedTest.add(question);
+	public ResponseEntity<CustomError> createTests(TestInfo testInfo) {
+		//int randomTestId = (int) (Math.random() * 300);
+		int randomTestId = 1;
+		if(testInfoRepository.findByTestId(randomTestId).isEmpty()) {
+			testInfo.setTestId(randomTestId);
+			testInfo.getTestQuestions().stream().forEach(q -> q.setTestId(randomTestId));
+			testInfoRepository.save(testInfo);
+			return ResponseEntity.ok().body(null);
+		}else {
+			System.out.println("test exist");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new CustomError(new Date(),"ID already exist, Try Again"));
 		}
 
-		return generatedTest;
+
 	}
 
 	public ArrayList<Questions> findTestByTestId(Integer testId) {
@@ -60,7 +55,10 @@ public class TestService {
 			questions.setQuestionId(t);
 			questions.setQuestion(questionsService.getQuestionById(t).getQuestion());
 			questions.setQuestionType((questionsService.getQuestionById(t).getQuestionType()));
-			questions.setOptionss(questionsService.getQuestionById(t).getOptionss());
+			if(!questions.getQuestionType().equals("Fill up")){
+				questions.setOptionss(questionsService.getQuestionById(t).getOptionss());
+			}
+			
 			generatedTest.add(questions);
 		}
 		return generatedTest;
@@ -70,11 +68,12 @@ public class TestService {
 
 		Random rand = new Random();
 		List<Integer> testQuestionList = new ArrayList<>();
-		testRepository.findByTestId(testId).stream().forEach(t -> testQuestionList.add(t.getTestQuestionId()));
+		testQuestionsRepository.findByTestId(testId).stream()
+		.forEach(tempQId -> testQuestionList.add(tempQId.getTestQuestionsId()));
 
 		{
 			List<Integer> newList = new ArrayList<>();
-			for (int i = 0; i <= testQuestionList.size(); i++) {
+			for (int i = 0; i < testQuestionList.size(); i++) {
 
 				int randomIndex = rand.nextInt(testQuestionList.size());
 
@@ -82,17 +81,22 @@ public class TestService {
 
 				testQuestionList.remove(randomIndex);
 			}
-			newList.add(testQuestionList.get(0));
+			if (!testQuestionList.isEmpty())
+				newList.add(testQuestionList.get(0));
 			System.out.println(newList);
 			return newList;
 		}
 
 	}
 
-	public List<Tests> findallTests() {
-		List<Tests> tests=new ArrayList<>();
-		testRepository.findAll().forEach(tests::add);
+	public List<TestInfo> findallTests() {
+		List<TestInfo> tests = new ArrayList<>();
+		testInfoRepository.findAll().forEach(tests::add);
 		return tests;
+	}
+
+	public void deleteTest(Integer testId) {
+		testInfoRepository.deleteById(testId);
 	}
 
 }

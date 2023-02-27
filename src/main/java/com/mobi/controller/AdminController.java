@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.mobi.exceptions.NoCorrectOptionError;
+import com.mobi.exceptions.CustomError;
 import com.mobi.models.Optionss;
 import com.mobi.models.Questions;
 import com.mobi.service.QuestionsService;
@@ -33,20 +33,20 @@ public class AdminController {
 		return questionsService.getAllQuestions();
 	}
 
-	@GetMapping("/question/{id}")
+	@GetMapping("/questions/{id}")
 	public Questions getQuesionById(@PathVariable Integer id) {
 		return questionsService.getQuestionById(id);
 	}
 
-	@PostMapping("/question")
-	public ResponseEntity<NoCorrectOptionError> addQuestion(@RequestBody Questions questions) {
+	@PostMapping("/questions")
+	public ResponseEntity<CustomError> addQuestion(@RequestBody Questions questions) {
 		for (Optionss q : questions.getOptionss()) {
 			if (q.isCorrectAnswer()) {
 				questionsService.addQuestion(questions);
 				return ResponseEntity.ok().body(null);
 			}
 		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NoCorrectOptionError(new Date(),"No Correct Option Found"));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomError(new Date(),"No Correct Option Found"));
 	}
 	
 	@PutMapping("/questions/{id}")
@@ -54,7 +54,7 @@ public class AdminController {
 		questionsService.updateQuestion(questions,id);
 	}
 
-	@DeleteMapping("/question/{id}")
+	@DeleteMapping("/questions/{id}")
 	public void deleteQuestion(@PathVariable Integer id) {
 		questionsService.deleteQuestion(id);
 	}
