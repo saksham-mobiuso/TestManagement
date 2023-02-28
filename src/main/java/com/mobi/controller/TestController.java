@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.mobi.exceptions.CustomError;
-import com.mobi.models.Questions;
 import com.mobi.models.TestInfo;
 import com.mobi.service.TestService;
 
@@ -27,7 +26,7 @@ public class TestController {
 	}
 
 	@GetMapping("/tests/{testId}")
-	public List<Questions> findTestByTestId(@PathVariable Integer testId) {
+	public ResponseEntity<Object> findTestByTestId(@PathVariable Integer testId) { 
 		System.out.println("hwlo " + testId);
 		return testService.findTestByTestId(testId);
 	}
@@ -40,6 +39,11 @@ public class TestController {
 	@DeleteMapping("/tests/{testId}")
 	public void deleteTest(@PathVariable Integer testId) {
 		testService.deleteTest(testId);
+	}
+	
+	@PutMapping("/tests/{testId}")
+	public void updateTest(@PathVariable Integer testId,@RequestBody TestInfo info) {
+		testService.updateTest(testId, info);
 	}
 
 }

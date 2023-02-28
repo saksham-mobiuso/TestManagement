@@ -3,6 +3,7 @@ package com.mobi.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,39 +30,44 @@ public class TestService {
 	TestQuestionsRepository testQuestionsRepository;
 
 	public ResponseEntity<CustomError> createTests(TestInfo testInfo) {
-		//int randomTestId = (int) (Math.random() * 300);
-		int randomTestId = 1;
-		if(testInfoRepository.findByTestId(randomTestId).isEmpty()) {
+		int randomTestId = (int) (Math.random() * 300);
+		//int randomTestId = 1;
+		if (testInfoRepository.findByTestId(randomTestId) == null) {
 			testInfo.setTestId(randomTestId);
 			testInfo.getTestQuestions().stream().forEach(q -> q.setTestId(randomTestId));
 			testInfoRepository.save(testInfo);
 			return ResponseEntity.ok().body(null);
-		}else {
+		} else {
 			System.out.println("test exist");
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new CustomError(new Date(),"ID already exist, Try Again"));
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body(new CustomError(new Date(), "ID already exist, Try Again"));
 		}
-
 
 	}
 
-	public ArrayList<Questions> findTestByTestId(Integer testId) {
+	public ResponseEntity<Object> findTestByTestId(Integer testId) {
 
 		ArrayList<Questions> generatedTest = new ArrayList<>();
 
 		Questions questions = null;
 
-		for (Integer t : randomSetGenerator(testId)) {
-			questions = new Questions();
-			questions.setQuestionId(t);
-			questions.setQuestion(questionsService.getQuestionById(t).getQuestion());
-			questions.setQuestionType((questionsService.getQuestionById(t).getQuestionType()));
-			if(!questions.getQuestionType().equals("Fill up")){
-				questions.setOptionss(questionsService.getQuestionById(t).getOptionss());
+		if (testInfoRepository.findByTestId(testId).isPublishStatus()) {
+
+			for (Integer t : randomSetGenerator(testId)) {
+				questions = new Questions();
+				questions.setQuestionId(t);
+				questions.setQuestion(questionsService.getQuestionById(t).getQuestion());
+				questions.setQuestionType((questionsService.getQuestionById(t).getQuestionType()));
+				if (!questions.getQuestionType().equals("Fill up")) {
+					questions.setOptionss(questionsService.getQuestionById(t).getOptionss());
+				}
+
+				generatedTest.add(questions);
 			}
-			
-			generatedTest.add(questions);
+			return ResponseEntity.status(HttpStatus.OK).body(generatedTest);
 		}
-		return generatedTest;
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomError(new Date(), "Not Published"));
+
 	}
 
 	private List<Integer> randomSetGenerator(Integer testId) {
@@ -69,11 +75,12 @@ public class TestService {
 		Random rand = new Random();
 		List<Integer> testQuestionList = new ArrayList<>();
 		testQuestionsRepository.findByTestId(testId).stream()
-		.forEach(tempQId -> testQuestionList.add(tempQId.getTestQuestionsId()));
+				.forEach(tempQId -> testQuestionList.add(tempQId.getTestQuestionsId()));
+		int questionListSize = testQuestionList.size();
 
 		{
 			List<Integer> newList = new ArrayList<>();
-			for (int i = 0; i < testQuestionList.size(); i++) {
+			for (int i = 0; i < questionListSize; i++) {
 
 				int randomIndex = rand.nextInt(testQuestionList.size());
 
@@ -81,8 +88,7 @@ public class TestService {
 
 				testQuestionList.remove(randomIndex);
 			}
-			if (!testQuestionList.isEmpty())
-				newList.add(testQuestionList.get(0));
+		
 			System.out.println(newList);
 			return newList;
 		}
@@ -97,6 +103,13 @@ public class TestService {
 
 	public void deleteTest(Integer testId) {
 		testInfoRepository.deleteById(testId);
+	}
+
+	public void updateTest(Integer testId, TestInfo info) {
+		Optional<TestInfo> testData = testInfoRepository.findById(testId);
+		if (testData.isPresent()) {
+			testInfoRepository.save(info);
+		} 
 	}
 
 }

@@ -12,7 +12,7 @@ import com.mobi.repository.QuestionsRepository;
 
 @Service
 public class QuestionsService {
-	
+
 	@Autowired
 	private QuestionsRepository questionsRepository;
 
@@ -26,7 +26,7 @@ public class QuestionsService {
 		return questionsRepository.findById(id).stream().filter(t -> t.getQuestionId().equals(id)).findFirst().get();
 	}
 
-	public void addQuestion(Questions questions) {		
+	public void addQuestion(Questions questions) {
 		questionsRepository.save(questions);
 	}
 
@@ -36,12 +36,8 @@ public class QuestionsService {
 
 	public ResponseEntity<Questions> updateQuestion(Questions questions, Integer id) {
 		Optional<Questions> questionData = questionsRepository.findById(id);
-		if(questionData.isPresent()) {
-			Questions tempQuestion = questionData.get();
-			tempQuestion.setQuestion(questions.getQuestion());
-			tempQuestion.setOptionss(questions.getOptionss());
-			tempQuestion.setQuestionType(questions.getQuestionType());
-			return new ResponseEntity<>(questionsRepository.save(tempQuestion),HttpStatus.OK);
+		if (questionData.isPresent()) {
+			return new ResponseEntity<>(questionsRepository.save(questions), HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
@@ -49,4 +45,5 @@ public class QuestionsService {
 	public List<Questions> fingByType(String type) {
 		return questionsRepository.findByQuestionType(type);
 	}
+
 }

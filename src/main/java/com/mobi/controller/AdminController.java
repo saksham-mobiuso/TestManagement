@@ -59,7 +59,7 @@ public class AdminController {
 		questionsService.deleteQuestion(id);
 	}
 	
-	@GetMapping("/questions/{type}")
+	@GetMapping("/questions/type/{type}")
 	public List<Questions> fingByType(@PathVariable String type) {
 		return questionsService.fingByType(type);
 	}
