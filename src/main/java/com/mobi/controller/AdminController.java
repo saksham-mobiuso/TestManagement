@@ -16,16 +16,12 @@ import com.mobi.exceptions.CustomError;
 import com.mobi.models.Optionss;
 import com.mobi.models.Questions;
 import com.mobi.service.QuestionsService;
-import com.mobi.service.UserService;
 
 @RestController
 public class AdminController {
 
 	@Autowired
 	private QuestionsService questionsService;
-
-	@Autowired
-	UserService userService;
 
 
 	@GetMapping("/questions")
