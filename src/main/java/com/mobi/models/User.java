@@ -1,7 +1,9 @@
 package com.mobi.models;
 
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -14,16 +16,29 @@ public class User {
 	private String role;
 	private boolean enabled;
 	
+	@ManyToMany
+	private List<TestInfo> userTests;
+	
 	public User() {
 		
 	}
-
-	public User(String userId, String userPassword, String role, boolean enabled) {
+	
+	
+	public User(String userId, String userPassword, String role, boolean enabled, List<TestInfo> userTests) {
 		super();
 		this.userId = userId;
 		this.userPassword = userPassword;
 		this.role = role;
 		this.enabled = enabled;
+		this.userTests = userTests;
+	}
+
+	public List<TestInfo> getUserTests() {
+		return userTests;
+	}
+
+	public void setUserTests(List<TestInfo> userTests) {
+		this.userTests = userTests;
 	}
 
 	public String getUserId() {

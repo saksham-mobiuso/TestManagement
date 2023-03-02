@@ -28,6 +28,7 @@ public class TestInfo {
 		this.publishStatus = publishStatus;
 		this.testQuestions = testQuestions;
 	}
+	
 
 	public Integer getTestId() {
 		return testId;
@@ -60,8 +61,5 @@ public class TestInfo {
 	public void setTestQuestions(List<TestQuestions> testQuestions) {
 		this.testQuestions = testQuestions;
 	}
-	
-
-	
 
 }
