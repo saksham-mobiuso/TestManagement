@@ -105,8 +105,8 @@ public class TestService {
 		testInfoRepository.deleteById(testId);
 	}
 
-	public void updateTest(Integer testId, TestInfo info) {
-		Optional<TestInfo> testData = testInfoRepository.findById(testId);
+	public void updateTest(TestInfo info) {
+		Optional<TestInfo> testData = testInfoRepository.findById(info.getTestId());
 		if (testData.isPresent()) {
 			testInfoRepository.save(info);
 		} 

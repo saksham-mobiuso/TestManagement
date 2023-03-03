@@ -45,9 +45,14 @@ public class AdminController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomError(new Date(),"No Correct Option Found"));
 	}
 	
-	@PutMapping("/questions/{id}")
-	public void updateQuestion(@RequestBody Questions questions, @PathVariable Integer id) {
-		questionsService.updateQuestion(questions,id);
+	@PutMapping("/questions")
+	public ResponseEntity<CustomError> updateQuestion(@RequestBody Questions questions) {
+		try {
+			questionsService.updateQuestion(questions);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomError(new Date(),"Question not found"));
+		}
+		return null;
 	}
 
 	@DeleteMapping("/questions/{id}")

@@ -41,9 +41,9 @@ public class TestController {
 		testService.deleteTest(testId);
 	}
 	
-	@PutMapping("/tests/{testId}")
-	public void updateTest(@PathVariable Integer testId,@RequestBody TestInfo info) {
-		testService.updateTest(testId, info);
+	@PutMapping("/tests")
+	public void updateTest(@RequestBody TestInfo info) {
+		testService.updateTest(info);
 	}
 
 }

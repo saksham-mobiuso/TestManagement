@@ -34,12 +34,9 @@ public class QuestionsService {
 		questionsRepository.deleteById(id);
 	}
 
-	public ResponseEntity<Questions> updateQuestion(Questions questions, Integer id) {
-		Optional<Questions> questionData = questionsRepository.findById(id);
-		if (questionData.isPresent()) {
-			return new ResponseEntity<>(questionsRepository.save(questions), HttpStatus.OK);
-		}
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	public void updateQuestion(Questions questions) {
+		questionsRepository.deleteById(questions.getQuestionId());
+		questionsRepository.save(questions);
 	}
 
 	public List<Questions> fingByType(String type) {
